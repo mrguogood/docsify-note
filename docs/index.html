@@ -13,16 +13,17 @@
 </head>
 <body>
   <nav>
-    <a href="www.itwanger.com">郭长帅的个人博客</a>
+    <a href="https://mrguogood.github.io/docsify-note/#/">郭长帅的个人博客</a>
 </nav>
   <div id="app"></div>
   <script>
     window.$docsify = {
-      name: '笔记文档',
-      repo: '',
+      name: '笔记',
+      repo: 'https://github.com/mrguogood/docsify-note.git',
       loadSidebar: true,
+      subMaxLevel: 3,
       coverpage: true,                     //开启页面
-
+      onlyCover: true,
       // Custom file name
       // coverpage: 'cover.md',               //可理解为页面路由
 
@@ -57,5 +58,7 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
   <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.22.0/components/prism-java.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
 </body>
 </html>
