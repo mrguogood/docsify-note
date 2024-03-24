@@ -1,12 +1,16 @@
 * [首页](README)
 
 * 前端技术
-     * [javascript](前端技术/javascript/)
-     * [vue3](前端技术/vue3/)
+     * [JavaScript](前端技术/JavaScript)
+     * [Vue3](前端技术/Vue3)
 
 * 后端技术
-     * [java](后端技术/java/)
-     * [python](后端技术/python/)
+     * [Java](后端技术/Java)
+     * [Python](后端技术/Python)
+
+* 数据库
+     * [MySql](数据库/MySql)
+     * [Oracle](数据库/Oracle)
 
 * Typora+Docsify使用指南
      * [Docsify使用指南](Typora+Docsify/Docsify使用指南)
