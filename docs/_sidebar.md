@@ -1,5 +1,7 @@
 * [首页](README)
 
+* [其它](其他/README)
+
 * 前端技术
      * [JavaScript](前端技术/JavaScript)
      * [Vue3](前端技术/Vue3)
