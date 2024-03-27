@@ -6,8 +6,7 @@
 
 ## 概念
 
-<img src="../images/image-20240325184417721.png" alt="image-20240325184417721" style="zoom:67%;" />
-
+![image-20240325184417721](../images/image-20240325184417721.png)
 ![image-20240325210838121](../images/image-20240325210838121.png)
 
 ![image-20240325211040502](../images/image-20240325211040502.png)
@@ -18,11 +17,11 @@
 
 ## 命令
 
-   <img src="../images/image-20240326205242235.png" alt="image-20240326205242235" style="zoom: 50%;" />
+![image-20240326205242235](../images/image-20240326205242235.png)
 
-<img src="../images/image-20240326210623729.png" alt="image-20240326210623729" style="zoom: 67%;" />
+![image-20240326210623729](../images/image-20240326210623729.png)
 
-<img src="../images/image-20240326211208258.png" alt="image-20240326211208258" style="zoom:67%;" />
+![image-20240326211208258](../images/image-20240326211208258.png)
 
 ```dockerfile
 systemctl start docker  启动docker
