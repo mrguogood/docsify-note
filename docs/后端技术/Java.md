@@ -3100,5 +3100,12 @@ unlock tables;
 
 
 
+# 面试
 
 
+
+所需框架：
+
+  分布式调度中间件：java定时任务Quartz   and  分布式调度 elastic job
+
+zookeeper
