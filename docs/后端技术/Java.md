@@ -3539,3 +3539,10 @@ excel上传2次，redis 分布式锁
 
 1. cmd , 执行 netstat -ano | findstr :8082
 2. 强制关闭：taskkill /PID 1234 /F
+
+## 线上服务cpu占用过高怎么排查
+
+1. top命令：找到cpu耗用最厉害的那个进程的PID
+2. top -H -p 进程PID： 通过PID找到耗用的最厉害的线程的PID
+3. printf '0x%x\n' 线程PID: 将线程PID转换为16进制
+4. jstack 进程PID | grep 16进制线程PID  -A  20  : 20是显示多少行。通过该命令，可以看到该线程的状态，是否守护线程，线程的内存地址等等；找到导致cpu占用过高的代码进行修改  
