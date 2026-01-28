@@ -24,14 +24,9 @@
 ---
 
 * 🛠️ **开发工具**
-  * [Docsify 使用指南](Typora+Docsify/Docsify使用指南.md)
-  * [Typora + Docsify 快速入门](Typora+Docsify/Typora+Docsify快速入门.md)
-  * [Docsify 部署教程](Typora+Docsify/Docsify部署教程.md)
-
----
-
-* 📝 **其他**
-  * [杂项笔记](其他/README.md)
+  * [Docker](开发工具/Docker.md)
+  * [Docsify 使用指南](开发工具/Docsify使用指南.md)
+  * [Typora + Docsify 快速入门](开发工具/Typora+Docsify快速入门.md)
 
 ---
 

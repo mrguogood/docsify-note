@@ -1,9 +1,3 @@
-# 说明
-
-> 项目一般分为：java web项目，SpringBoot一体化项目，Spring Cloud项目
-
-# Docker
-
 ## 概念
 
 ![image-20240325184417721](../images/image-20240325184417721.png)

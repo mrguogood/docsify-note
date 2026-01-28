@@ -7,8 +7,9 @@
   * [📜 JavaScript](前端技术/JavaScript.md)
 
 * 🔧 工具
-  * [Docsify 指南](Typora+Docsify/Docsify使用指南.md)
-  * [部署教程](Typora+Docsify/Docsify部署教程.md)
+  * [Docker](开发工具/Docker.md)
+  * [Docsify 使用指南](开发工具/Docsify使用指南.md)
+  * [Typora + Docsify 快速入门](开发工具/Typora+Docsify快速入门.md)
 
 * 🔗 链接
   * [GitHub](https://github.com/mrguogood/docsify-note)
