@@ -1189,3 +1189,9 @@ volatile虽然**具备可见性**，但是**不具备原子性**。
 2. top -H -p 进程PID： 通过PID找到耗用的最厉害的线程的PID
 3. printf '0x%x\n' 线程PID: 将线程PID转换为16进制
 4. jstack 进程PID | grep 16进制线程PID  -A  20  : 20是显示多少行。通过该命令，可以看到该线程的状态，是否守护线程，线程的内存地址等等；找到导致cpu占用过高的代码进行修改  
+
+# 相关教程参考
+
+## JVM
+
+<embed src="../文档/极简JVM教程-周瑜.pdf" type="application/pdf" width="100%" height="800px" />
