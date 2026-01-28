@@ -1,4 +1,4 @@
-# JVM
+﻿# JVM
 
 ## 简介
 
@@ -254,7 +254,7 @@ Eden 区内存空间满了的时候，就会触发 Minor GC，Survivor0 区满�
 
 而且当老年区执行了 full gc 之后仍然无法进行对象保存的操作，就会产生 OOM，这时候就是虚拟机中的堆内存不足，原因可能会是堆内存设置的大小过小，这个可以通过参数-Xms、-Xmx 来调整。也可能是代码中创建的对象大且多，而且它们一直在被引用从而长时间垃圾收集无法收集它们。
 
-<img src="../images/398255141fde8ba208f6c99f4edaa9fe.png" alt="img" style="zoom:67%;" />
+![image-398255141fde8ba208f6c99f4edaa9fe](../images/398255141fde8ba208f6c99f4edaa9fe.png)
 
 补充说明：关于-XX:TargetSurvivorRatio 参数的问题。其实也不一定是要满足-XX:MaxTenuringThreshold 才移动到老年代。可以举个例子：如对象年龄 5 的占 30%，年龄 6 的占 36%，年龄 7 的占 34%，加入某个年龄段（如例子中的年龄 6）后，总占用超过 Survivor 空间*TargetSurvivorRatio 的时候，从该年龄段开始及大于的年龄对象就要进入老年代（即例子中的年龄 6 对象，就是年龄 6 和年龄 7 晋升到老年代），这时候无需等到 MaxTenuringThreshold 中要求的 15
 
@@ -262,7 +262,7 @@ Eden 区内存空间满了的时候，就会触发 Minor GC，Survivor0 区满�
 
 #### 如何判断一个对象需要被干掉
 
-<img src="../images/1ba7f3cff6e07c6e9c6765cc4ef74997.png" alt="img" style="zoom:67%;" />
+![image-1ba7f3cff6e07c6e9c6765cc4ef74997](../images/1ba7f3cff6e07c6e9c6765cc4ef74997.png)
 
 图中程序计数器、虚拟机栈、本地方法栈，3 个区域随着线程的生存而生存的。内存分配和回收都是确定的。随着线程的结束内存自然就被回收了，因此不需要考虑垃圾回收的问题。而 Java 堆和方法区则不一样，各线程共享，内存的分配和回收都是动态的。因此垃圾收集器所关注的都是堆和方法这部分内存。
 
@@ -305,7 +305,7 @@ finalize()是 Object 类的一个方法、一个对象的 finalize()方法只会
 
 #### 垃圾回收算法
 
-<img src="../images/9ff72176ab0bf58bc43e142f69427379.png" alt="img" style="zoom:67%;" />
+![image-9ff72176ab0bf58bc43e142f69427379](../images/9ff72176ab0bf58bc43e142f69427379.png)
 
 到 jdk8 为止，默认的垃圾收集器是 Parallel Scavenge 和 Parallel Old
 
@@ -1091,7 +1091,7 @@ public class ThreadVolatile {
 
 而JMM就作用于工作内存和主存之间数据同步过程。他规定了如何做数据同步以及什么时候做数据同步。
 
-<img src="../images/image-20240321150944476.png" alt="image-20240321150944476" style="zoom: 50%;" />
+![image-image-20240321150944476](../images/image-20240321150944476.png)
 
 **1. 首先要将共享变量从主内存拷贝到线程自己的工作内存空间，工作内存中存储着主内存中的变量副本拷贝；**
 
