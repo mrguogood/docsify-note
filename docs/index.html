@@ -474,6 +474,12 @@
         theme: 'classic',
         tabComments: true,
         tabHeadings: true
+      },
+      // 代码复制插件配置
+      copyCode: {
+        buttonText: '📋 复制',
+        errorText: '❌ 复制失败',
+        successText: '✅ 已复制!'
       }
     }
     
@@ -527,13 +533,5 @@
   <!-- KaTeX 数学公式支持 -->
   <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"/>
-  
-  <!-- 复制代码提示 -->
-  <script>
-    window.DocsifyCopyCodePlugin = {
-      buttonText: '📋 复制',
-      successText: '✅ 已复制!'
-    }
-  </script>
 </body>
 </html>
