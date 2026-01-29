@@ -1197,8 +1197,9 @@ volatile虽然**具备可见性**，但是**不具备原子性**。
 <div class="responsive-pdf aspect-portrait">
     <iframe
     class="pdf-frame"
-    src="/docsify-note/document/极简JVM教程-周瑜.pdf"
+    src="/document/极简JVM教程-周瑜.pdf"
     type="application/pdf"
-    aria-label="极简JVM教程 PDF">
+    aria-label="极简JVM教程 PDF"
+    loading="lazy">
     </iframe>
 </div>
