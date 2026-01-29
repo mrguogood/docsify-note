@@ -1,136 +1,112 @@
 (function () {
+  /* =========================
+   * 基础配置
+   * ========================= */
   const REPO_NAME = 'docsify-note';
   const LOCAL_HOSTS = ['localhost', '127.0.0.1'];
 
-  const isLocal = LOCAL_HOSTS.includes(location.hostname);
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  const isAndroid = /android/i.test(navigator.userAgent);
-  
-  // 检测是否为移动设备
-  const isMobileDevice = /mobile|android|iphone|ipad|ipod|windows phone|webos|blackberry|tablet|opera mini/i.test(navigator.userAgent);
-  // 或者通过视口宽度检测
-  const isMobileViewport = window.innerWidth <= 768;
+  /* =========================
+   * 环境判断
+   * ========================= */
+  const hostname = location.hostname;
+  const ua = navigator.userAgent.toLowerCase();
 
-  const isIOSSafari = isIOS && isSafari;
+  const isLocal = LOCAL_HOSTS.includes(hostname);
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isAndroid = /android/.test(ua);
+  const isSafari = isIOS && /safari/.test(ua) && !/crios|fxios/.test(ua);
+
+  // 是否需要 PDF fallback（核心判断）
+  const needPdfFallback = isSafari || (isAndroid && /mobile/.test(ua));
+
   const BASE_PATH = isLocal ? '' : `/${REPO_NAME}`;
 
-  /**
-   * 创建 PDF 下载/打开链接
-   * @param {string} src - PDF 源地址
-   * @param {string} title - PDF 标题
-   * @returns {HTMLElement} 链接元素
-   */
-  function createPdfFallbackLink(src, title = 'PDF 文档') {
-    const container = document.createElement('div');
-    container.className = 'pdf-fallback-container';
-    container.style.cssText = `
-      padding: 20px;
-      margin: 16px 0;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border: 2px dashed #3498db;
-      border-radius: 8px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    `;
+  /* =========================
+   * 创建 PDF fallback 结构
+   * ========================= */
+  function createPdfFallback(src, title) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pdf-fallback';
 
-    const icon = document.createElement('span');
+    const icon = document.createElement('div');
+    icon.className = 'pdf-fallback-icon';
     icon.textContent = '📄';
-    icon.style.fontSize = '32px';
 
-    const text = document.createElement('p');
-    text.textContent = `${title} - 点击下方按钮打开或下载`;
-    text.style.cssText = 'margin: 0; color: #2c3e50; font-weight: 500;';
+    const text = document.createElement('div');
+    text.className = 'pdf-fallback-text';
+    text.textContent = title || 'PDF 文档';
 
     const link = document.createElement('a');
+    link.className = 'pdf-fallback-link';
     link.href = src;
-    link.textContent = '📖 在新窗口中打开';
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.style.cssText = `
-      display: inline-block;
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    `;
-    link.onmouseover = function() {
-      this.style.background = '#2980b9';
-      this.style.transform = 'translateY(-2px)';
-    };
-    link.onmouseout = function() {
-      this.style.background = '#3498db';
-      this.style.transform = 'translateY(0)';
-    };
+    link.textContent = '在新窗口中打开';
 
-    container.appendChild(icon);
-    container.appendChild(text);
-    container.appendChild(link);
+    wrapper.appendChild(icon);
+    wrapper.appendChild(text);
+    wrapper.appendChild(link);
 
-    return container;
+    return wrapper;
   }
 
-  /**
-   * 获取 iframe 所在容器的标题
-   * @param {HTMLElement} iframe - iframe 元素
-   * @returns {string} 标题文本
-   */
+  /* =========================
+   * 获取 PDF 标题
+   * ========================= */
   function getPdfTitle(iframe) {
-    const container = iframe.closest('.responsive-pdf');
-    const ariaLabel = iframe.getAttribute('aria-label');
-    const title = container?.querySelector('h3, h2')?.textContent;
-    return ariaLabel || title || 'PDF 文档';
+    return (
+      iframe.getAttribute('aria-label') ||
+      iframe.getAttribute('title') ||
+      'PDF 文档'
+    );
   }
 
-  /**
-   * 修补 iframe 路径并处理兼容性
-   */
-  function patchIframeAndPdf() {
-    document.querySelectorAll('iframe[src^="/"]').forEach(iframe => {
-      if (iframe.dataset.iframePathPatched) return;
+  /* =========================
+   * 核心处理逻辑
+   * ========================= */
+  function patchPdfIframe() {
+    document
+      .querySelectorAll('iframe[src^="/"][src$=".pdf"]')
+      .forEach(iframe => {
+        if (iframe.dataset.iframePathPatched) return;
 
-      const rawSrc = iframe.getAttribute('src');
-      const fullSrc = BASE_PATH + rawSrc;
-      const isPdf = rawSrc.endsWith('.pdf');
-      const pdfTitle = isPdf ? getPdfTitle(iframe) : '';
+        const rawSrc = iframe.getAttribute('src');
+        const fullSrc = BASE_PATH + rawSrc;
+        const title = getPdfTitle(iframe);
 
-      // 移动设备：PDF 使用 fallback 链接（包括所有移动设备）
-      if (isPdf && (isMobileDevice || isMobileViewport)) {
-        const fallback = createPdfFallbackLink(fullSrc, pdfTitle);
-        iframe.parentNode.replaceChild(fallback, iframe);
-        return;
-      }
+        // 标记已处理（必须最先）
+        iframe.dataset.iframePathPatched = '1';
 
-      iframe.setAttribute('src', fullSrc);
-      iframe.dataset.iframePathPatched = '1';
+        // 需要 fallback 的环境
+        if (needPdfFallback) {
+          const fallback = createPdfFallback(fullSrc, title);
+          iframe.parentNode.replaceChild(fallback, iframe);
+          return;
+        }
 
-      // 为 PDF 添加错误处理
-      if (isPdf) {
-        iframe.addEventListener('error', function() {
-          console.warn(`PDF 加载失败: ${fullSrc}`);
-          const fallback = createPdfFallbackLink(fullSrc, pdfTitle);
-          this.parentNode.replaceChild(fallback, this);
+        // 桌面端：正常 iframe
+        iframe.setAttribute('src', fullSrc);
+
+        // 加载失败兜底
+        iframe.addEventListener('error', () => {
+          const fallback = createPdfFallback(fullSrc, title);
+          iframe.parentNode.replaceChild(fallback, iframe);
         });
-      }
-    });
+      });
   }
 
-  // Docsify 插件钩子
+  /* =========================
+   * 注册 Docsify 插件
+   * ========================= */
   window.$docsify = window.$docsify || {};
-  window.$docsify.plugins = (window.$docsify.plugins || []).concat(function (hook) {
-    hook.doneEach(patchIframeAndPdf);
+  window.$docsify.plugins = (window.$docsify.plugins || []).concat(hook => {
+    hook.doneEach(patchPdfIframe);
   });
 
-  // DOM 加载完成后处理
+  // 首次加载兜底
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', patchIframeAndPdf);
+    document.addEventListener('DOMContentLoaded', patchPdfIframe);
   } else {
-    patchIframeAndPdf();
+    patchPdfIframe();
   }
 })();
