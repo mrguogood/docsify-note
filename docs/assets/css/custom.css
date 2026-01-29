@@ -483,7 +483,7 @@ html {
   bottom: 15px;
   z-index: 30;
   cursor: pointer;
-  background: transparent;
+  background: var(--primary-color);
   border: none;
   border-radius: 4px;
   padding: 5px 7px;
@@ -494,12 +494,12 @@ html {
   justify-content: space-around;
   align-items: center;
   transition: all var(--transition-fast);
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-toggle:hover {
-  background: transparent;
-  box-shadow: none;
+  background: var(--primary-dark);
+  box-shadow: 0 4px 12px rgba(66, 185, 131, 0.3);
   transform: scale(1.05);
 }
 
@@ -507,7 +507,7 @@ html {
   display: block;
   width: 13px;
   height: 1.5px;
-  background: var(--primary-color);
+  background: white;
   border-radius: 2px;
   transition: all var(--transition-fast);
 }
@@ -587,15 +587,18 @@ html {
     position: fixed;
     left: -100%;
     top: 0;
-    width: 250px;
+    width: 70vw;
+    max-width: 280px;
     height: 100vh;
     z-index: 25;
     overflow-y: auto;
+    overflow-x: hidden;
     transition: left var(--transition-normal) ease;
     background: var(--sidebar-bg);
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     display: block !important;
     transform: none;
+    padding-bottom: 60px;
   }
   
   .sidebar.open {
@@ -605,6 +608,16 @@ html {
   .sidebar.collapsed {
     left: -100%;
     transform: none;
+  }
+  
+  /* 移动端侧边栏内容优化 */
+  .sidebar .sidebar-nav {
+    padding: 10px 0;
+  }
+  
+  .sidebar .sidebar-nav li > a {
+    padding: 8px 12px;
+    font-size: 0.95rem;
   }
   
   /* 移动端显示汉堡菜单按钮 */
