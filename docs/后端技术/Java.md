@@ -1195,9 +1195,14 @@ volatile虽然**具备可见性**，但是**不具备原子性**。
 ## JVM
 
 <div class="responsive-pdf aspect-portrait">
-    <iframe class="pdf-frame" src="../document/极简JVM教程-周瑜.pdf" type="application/pdf" aria-label="极简JVM教程 PDF"></iframe>
+    <iframe
+    class="pdf-frame"
+    src="/docsify-note/document/极简JVM教程-周瑜.pdf"
+    type="application/pdf"
+    aria-label="极简JVM教程 PDF">
+    </iframe>
 </div>
 
 如果手机浏览器无法内嵌预览，请使用以下链接在新标签页打开：
 
-[《极简JVM教程-周瑜.pdf》](../document/极简JVM教程-周瑜.pdf)
+[《极简JVM教程-周瑜.pdf》](/docsify-note/document/极简JVM教程-周瑜.pdf)
