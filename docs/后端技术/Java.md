@@ -1202,7 +1202,3 @@ volatile虽然**具备可见性**，但是**不具备原子性**。
     aria-label="极简JVM教程 PDF">
     </iframe>
 </div>
-
-如果手机浏览器无法内嵌预览，请使用以下链接在新标签页打开：
-
-[《极简JVM教程-周瑜.pdf》](/docsify-note/document/极简JVM教程-周瑜.pdf)
