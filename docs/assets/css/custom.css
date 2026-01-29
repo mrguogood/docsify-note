@@ -622,44 +622,89 @@ html {
   box-shadow: var(--shadow-md);
 }
 
-/* 响应式调整 */
+/* 响应式调整 - 优化移动端显示 */
 @media screen and (max-width: 768px) {
   .responsive-pdf {
     margin: 16px 0;
     border-radius: var(--radius-md);
+    border-width: 1px;
   }
 
   .responsive-pdf.aspect-portrait {
-    padding-top: 150%;
+    padding-top: 180%;  /* 增加移动端PDF显示高度，改善阅读体验 */
+    min-height: 50vh;   /* 确保有足够的空间显示PDF内容 */
   }
 
   .responsive-pdf.aspect-landscape {
-    padding-top: 100%;
+    padding-top: 120%;  /* 在移动设备上增大横屏PDF的高度 */
+    min-height: 45vh;
+  }
+  
+  /* 特别针对移动设备优化PDF fallback容器 */
+  .pdf-fallback-container {
+    padding: 18px;
+    gap: 12px;
+    margin: 12px 0;
+    border-width: 2px;
+  }
+  
+  .pdf-fallback-container span {
+    font-size: 28px !important;
+  }
+  
+  .pdf-fallback-container p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  
+  .pdf-fallback-container a {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    text-decoration: none;
   }
 }
 
 @media screen and (max-width: 600px) {
   .responsive-pdf {
-    margin: 12px 0;
+    margin: 12px -10px; /* 调整边缘间距，适配窄屏 */
+    border-radius: var(--radius-sm);
   }
 
   .responsive-pdf.aspect-portrait {
-    padding-top: 160%;
+    padding-top: 200%;  /* 进一步增加小屏幕设备上的PDF显示高度 */
+    min-height: 45vh;
   }
 
   .responsive-pdf.aspect-landscape {
-    padding-top: 120%;
+    padding-top: 140%;  /* 小屏幕上的横屏PDF */
+    min-height: 40vh;
   }
 
   .pdf-fallback-container {
-    padding: 16px;
+    padding: 15px;
     gap: 10px;
   }
 
   .pdf-fallback-container a {
-    padding: 8px 16px;
-    font-size: 0.9em;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  /* 优化小屏幕上的触摸目标 */
+  .pdf-fallback-container a {
+    min-height: 44px;  /* 符合移动设备触摸目标尺寸标准 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-
+/* 添加淡入动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

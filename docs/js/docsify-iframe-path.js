@@ -24,49 +24,92 @@
   function createPdfFallbackLink(src, title = 'PDF 文档') {
     const container = document.createElement('div');
     container.className = 'pdf-fallback-container';
-    container.style.cssText = `
-      padding: 20px;
-      margin: 16px 0;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      border: 2px dashed #3498db;
-      border-radius: 8px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    `;
+    
+    // 为移动端设备添加额外的CSS样式
+    if (isMobileDevice || isMobileViewport) {
+      container.style.cssText = `
+        padding: 18px;
+        margin: 12px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: 2px dashed #42b983;
+        border-radius: 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        animation: fadeIn 0.3s ease;
+        min-width: 300px;
+      `;
+    } else {
+      container.style.cssText = `
+        padding: 20px;
+        margin: 16px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border: 2px dashed #42b983;
+        border-radius: 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        animation: fadeIn 0.3s ease;
+      `;
+    }
 
     const icon = document.createElement('span');
     icon.textContent = '📄';
-    icon.style.fontSize = '32px';
+    icon.style.fontSize = isMobileDevice || isMobileViewport ? '28px' : '32px';
 
     const text = document.createElement('p');
     text.textContent = `${title} - 点击下方按钮打开或下载`;
-    text.style.cssText = 'margin: 0; color: #2c3e50; font-weight: 500;';
+    text.style.cssText = 'margin: 0; color: #2c3e50; font-weight: 500; font-size: 15px; line-height: 1.5;';
 
     const link = document.createElement('a');
     link.href = src;
     link.textContent = '📖 在新窗口中打开';
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.style.cssText = `
-      display: inline-block;
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    `;
+    if (isMobileDevice || isMobileViewport) {
+      link.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 12px 24px;
+        background: #42b983;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+      `;
+    } else {
+      link.style.cssText = `
+        display: inline-block;
+        padding: 10px 20px;
+        background: #42b983;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      `;
+    }
     link.onmouseover = function() {
-      this.style.background = '#2980b9';
+      this.style.background = '#2c8460';
       this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
     };
     link.onmouseout = function() {
-      this.style.background = '#3498db';
+      this.style.background = isMobileDevice || isMobileViewport ? '#42b983' : '#42b983';
       this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
     };
 
     container.appendChild(icon);
