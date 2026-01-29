@@ -424,6 +424,8 @@
       auto2top: true,
       // 路由模式
       routerMode: 'hash',
+      // 延迟初始化，确保DOM完全加载后再初始化
+      executeScript: true,
       // 别名
       alias: {
         '/.*/_sidebar.md': '/_sidebar.md',
@@ -487,17 +489,144 @@
         height: 'auto',
         // 错误页面处理
         errorPage: false
+      },
+      // 侧边栏折叠插件配置
+      sidebarCollapse: {
+        useLocalStorage: true
       }
     }
     
     // 返回顶部按钮显示/隐藏
     window.addEventListener('scroll', function() {
       var btn = document.querySelector('.back-to-top');
-      if (window.scrollY > 300) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
+        if (window.scrollY > 300) {
+          btn.classList.add('show');
+        } else {
+          btn.classList.remove('show');
       }
+    });
+
+    // 侧边栏控制（PC端和移动端通用）
+    function initSidebarToggle() {
+      const sidebar = document.querySelector('.sidebar');
+      if (!sidebar) return;
+      
+      const isMobile = window.innerWidth <= 768;
+      
+      // 检查是否已经初始化过
+      if (document.querySelector('.sidebar-toggle')) return;
+      
+      // 创建汉堡菜单按钮
+      const toggle = document.createElement('button');
+      toggle.className = 'sidebar-toggle';
+      toggle.setAttribute('aria-label', '切换侧边栏');
+      toggle.innerHTML = '<span></span><span></span><span></span>';
+      document.body.appendChild(toggle);
+      
+      // 仅在移动端创建遮罩
+      let mask = null;
+      if (isMobile) {
+        mask = document.createElement('div');
+        mask.className = 'sidebar-mask';
+        document.body.appendChild(mask);
+      }
+      
+      // 侧边栏点击处理
+      const toggleSidebar = function(show) {
+        if (isMobile) {
+          // 移动端：打开/关闭侧边栏
+          if (show) {
+            sidebar.classList.add('open');
+            sidebar.classList.remove('collapsed');
+            if (mask) mask.classList.add('open');
+            toggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          } else {
+            sidebar.classList.remove('open');
+            if (mask) mask.classList.remove('open');
+            toggle.classList.remove('active');
+            document.body.style.overflow = '';
+          }
+        } else {
+          // PC端：切换侧边栏显示/隐藏
+          if (show === undefined) {
+            // 切换
+            sidebar.classList.toggle('collapsed');
+            toggle.classList.toggle('active');
+          } else {
+            // 显式设置
+            if (show) {
+              sidebar.classList.remove('collapsed');
+              toggle.classList.remove('active');
+            } else {
+              sidebar.classList.add('collapsed');
+              toggle.classList.add('active');
+            }
+          }
+        }
+      };
+      
+      // 汉堡菜单点击事件
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        
+        if (isMobile) {
+          const isOpen = sidebar.classList.contains('open');
+          toggleSidebar(!isOpen);
+        } else {
+          toggleSidebar();
+        }
+      });
+      
+      // 移动端：遮罩点击事件
+      if (mask) {
+        mask.addEventListener('click', function() {
+          toggleSidebar(false);
+        });
+      }
+      
+      // 移动端：点击侧边栏链接时关闭侧边栏
+      if (isMobile) {
+        sidebar.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A' || e.target.closest('a')) {
+            setTimeout(() => {
+              toggleSidebar(false);
+            }, 100);
+          }
+        });
+        
+        // 防止遮罩点击事件冒泡到 body
+        sidebar.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+      }
+      
+      // 窗口大小改变时处理
+      window.addEventListener('resize', function() {
+        const newIsMobile = window.innerWidth <= 768;
+        
+        if (newIsMobile !== isMobile) {
+          // 从 PC 改变为移动端或反之
+          location.reload();
+        } else if (!newIsMobile) {
+          // 在 PC 端调整大小，恢复侧边栏显示
+          sidebar.classList.remove('collapsed');
+          toggle.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+    
+    // 初始化侧边栏
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSidebarToggle);
+    } else {
+      initSidebarToggle();
+    }
+    
+    // 在 Docsify 初始化完成后再次调用初始化（防止 Docsify 加载覆盖）
+    window.addEventListener('load', function() {
+      setTimeout(initSidebarToggle, 500);
     });
   </script>
   
@@ -515,14 +644,15 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
   <!-- 字数统计 -->
   <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
-  <!-- 侧边栏折叠 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
   <!-- Emoji 表情支持 -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
   <!-- 外部链接脚本 -->
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
   <!-- 进度条 -->
   <script src="//cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+  
+  <!-- 侧边栏折叠插件（移到其他插件之后） -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
   
   <!-- 代码高亮 -->
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>

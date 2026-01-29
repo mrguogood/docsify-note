@@ -84,6 +84,11 @@ html {
   padding-left: 15px;
 }
 
+/* 侧边栏打开状态 */
+.sidebar.open {
+  display: block !important;
+}
+
 /* 分隔线样式 */
 .sidebar-nav hr {
   margin: 15px 10px;
@@ -468,6 +473,95 @@ html {
 }
 
 /* ============================================
+   侧边栏折叠按钮样式（汉堡菜单）
+   ============================================ */
+
+/* 汉堡菜单按钮 - PC端默认隐藏 */
+.sidebar-toggle {
+  position: fixed;
+  left: 15px;
+  bottom: 15px;
+  z-index: 30;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 7px;
+  width: 27px;
+  height: 27px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  transition: all var(--transition-fast);
+  box-shadow: none;
+}
+
+.sidebar-toggle:hover {
+  background: transparent;
+  box-shadow: none;
+  transform: scale(1.05);
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 13px;
+  height: 1.5px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+/* 侧边栏打开时的动画 */
+.sidebar.open ~ .sidebar-toggle span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.sidebar.open ~ .sidebar-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+.sidebar.open ~ .sidebar-toggle span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* 侧边栏遮罩 - PC端默认隐藏 */
+.sidebar-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 20;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+  display: none;
+}
+
+.sidebar-mask.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* PC端侧边栏样式 */
+.sidebar {
+  display: block !important;
+  transition: transform var(--transition-normal) ease, width var(--transition-normal) ease;
+}
+
+/* 侧边栏收起时的样式 */
+.sidebar.collapsed {
+  transform: translateX(-100%);
+}
+
+/* PC端汉堡菜单按钮显示 */
+.sidebar-toggle {
+  display: flex;
+}
+
+/* ============================================
    响应式调整
    ============================================ */
 
@@ -486,6 +580,51 @@ html {
   
   .search input {
     padding: 10px 15px 10px 40px !important;
+  }
+  
+  /* 移动端侧边栏隐藏 */
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    z-index: 25;
+    overflow-y: auto;
+    transition: left var(--transition-normal) ease;
+    background: var(--sidebar-bg);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    display: block !important;
+    transform: none;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar.collapsed {
+    left: -100%;
+    transform: none;
+  }
+  
+  /* 移动端显示汉堡菜单按钮 */
+  .sidebar-toggle {
+    display: flex;
+  }
+  
+  /* 移动端显示遮罩 */
+  .sidebar-mask {
+    display: block;
+  }
+  
+  /* 调整内容区域以适应侧边栏 */
+  .markdown-section {
+    margin-left: 0;
+  }
+  
+  /* 应用栏和导航栏调整 */
+  .app-nav {
+    margin-left: 0;
   }
 }
 
