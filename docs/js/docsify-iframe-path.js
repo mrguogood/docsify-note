@@ -6,6 +6,11 @@
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const isAndroid = /android/i.test(navigator.userAgent);
+  
+  // 检测是否为移动设备
+  const isMobileDevice = /mobile|android|iphone|ipad|ipod|windows phone|webos|blackberry|tablet|opera mini/i.test(navigator.userAgent);
+  // 或者通过视口宽度检测
+  const isMobileViewport = window.innerWidth <= 768;
 
   const isIOSSafari = isIOS && isSafari;
   const BASE_PATH = isLocal ? '' : `/${REPO_NAME}`;
@@ -95,8 +100,8 @@
       const isPdf = rawSrc.endsWith('.pdf');
       const pdfTitle = isPdf ? getPdfTitle(iframe) : '';
 
-      // iOS Safari 和 Android：PDF 使用 fallback 链接
-      if ((isIOSSafari || isAndroid) && isPdf) {
+      // 移动设备：PDF 使用 fallback 链接（包括所有移动设备）
+      if (isPdf && (isMobileDevice || isMobileViewport)) {
         const fallback = createPdfFallbackLink(fullSrc, pdfTitle);
         iframe.parentNode.replaceChild(fallback, iframe);
         return;
