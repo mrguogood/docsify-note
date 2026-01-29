@@ -480,6 +480,13 @@
         buttonText: '📋 复制',
         errorText: '❌ 复制失败',
         successText: '✅ 已复制!'
+      },
+      // PDF 处理配置
+      pdf: {
+        // 默认高度（像素）
+        height: 'auto',
+        // 错误页面处理
+        errorPage: false
       }
     }
     
@@ -537,6 +544,32 @@
   <!-- PDF 嵌入插件 -->
   <script src="//cdn.jsdelivr.net/npm/docsify-pdf-embed/pdfobject.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-pdf-embed/docsify-pdf-embed.js"></script>
+  
+  <!-- PDF 懒加载增强 -->
+  <script>
+    // 为所有 PDF iframe 添加懒加载支持
+    if ('IntersectionObserver' in window) {
+      const pdfObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const iframe = entry.target;
+            if (iframe.dataset.src) {
+              iframe.src = iframe.dataset.src;
+              iframe.removeAttribute('data-src');
+              pdfObserver.unobserve(iframe);
+            }
+          }
+        });
+      }, { rootMargin: '50px' });
+
+      // 观察所有 PDF iframe
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('iframe[data-src]').forEach(iframe => {
+          pdfObserver.observe(iframe);
+        });
+      });
+    }
+  </script>
   
   <!-- 文件github和本地显示插件 -->
   <script src="./js/docsify-iframe-path.js"></script>
