@@ -630,12 +630,13 @@ html {
     border-width: 1px;
   }
 
-  .responsive-pdf.aspect-portrait {
+  /* 仅当含有iframe时才设置高度，fallback容器不需要固定高度 */
+  .responsive-pdf:has(iframe) {
     padding-top: 180%;  /* 增加移动端PDF显示高度，改善阅读体验 */
     min-height: 50vh;   /* 确保有足够的空间显示PDF内容 */
   }
 
-  .responsive-pdf.aspect-landscape {
+  .responsive-pdf:has(iframe).aspect-landscape {
     padding-top: 120%;  /* 在移动设备上增大横屏PDF的高度 */
     min-height: 45vh;
   }
@@ -674,12 +675,13 @@ html {
     border-radius: var(--radius-sm);
   }
 
-  .responsive-pdf.aspect-portrait {
+  /* 仅当含有iframe时才设置高度，fallback容器自适应 */
+  .responsive-pdf:has(iframe) {
     padding-top: 200%;  /* 进一步增加小屏幕设备上的PDF显示高度 */
     min-height: 45vh;
   }
 
-  .responsive-pdf.aspect-landscape {
+  .responsive-pdf:has(iframe).aspect-landscape {
     padding-top: 140%;  /* 小屏幕上的横屏PDF */
     min-height: 40vh;
   }
