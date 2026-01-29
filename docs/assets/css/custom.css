@@ -662,36 +662,4 @@ html {
   }
 }
 
-.pdf-fallback {
-  padding: 20px;
-  margin: 16px 0;
-  border: 2px dashed #3498db;
-  border-radius: 8px;
-  background: #f8fafc;
-  text-align: center;
-}
-
-.pdf-fallback-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
-}
-
-.pdf-fallback-text {
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.pdf-fallback-link {
-  display: inline-block;
-  padding: 8px 16px;
-  background: #3498db;
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-}
-
-.pdf-fallback-link:hover {
-  background: #2980b9;
-}
-
 
