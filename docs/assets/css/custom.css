@@ -506,3 +506,48 @@ html {
     padding: 0 !important;
   }
 }
+
+/* ============================================
+   响应式 PDF 嵌入样式（用于移动端友好显示）
+   使用：在 Markdown 中包裹一个 .responsive-pdf 容器，
+   并选择 .aspect-portrait 或 .aspect-landscape
+   ============================================ */
+.responsive-pdf {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 16px 0;
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+}
+
+/* 默认纵向长页（手机友好） */
+.responsive-pdf.aspect-portrait {
+  padding-top: 140%; /* 高度 = 140% 宽度，移动端更高以便滚动浏览长 PDF */
+}
+
+/* 横向页面（常规桌面比例） */
+.responsive-pdf.aspect-landscape {
+  padding-top: 56.25%; /* 16:9 */
+}
+
+.responsive-pdf .pdf-frame,
+.responsive-pdf iframe,
+.responsive-pdf embed,
+.responsive-pdf object {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .responsive-pdf.aspect-landscape {
+    padding-top: 120%; /* 在小屏幕上也适当增高 */
+  }
+}
+
