@@ -582,7 +582,7 @@ html {
 }
 
 /* PDF Fallback 容器（兼容性处理） */
-.pdf-fallback-container {
+.pdf-fallback-container, .doc-fallback-container {
   padding: 20px;
   margin: 16px 0;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
