@@ -1,21 +1,21 @@
 ## 概念
 
-![image-20240325184417721](../images/image-20240325184417721.png)
-![image-20240325210838121](../images/image-20240325210838121.png)
+![image-20240325184417721](/images/image-20240325184417721.png)
+![image-20240325210838121](/images/image-20240325210838121.png)
 
-![image-20240325211040502](../images/image-20240325211040502.png)
+![image-20240325211040502](/images/image-20240325211040502.png)
 
-![image-20240325213152124](../images/image-20240325213152124.png)
+![image-20240325213152124](/images/image-20240325213152124.png)
 
 *从仓库里拉取镜像，创建容器，启动服务（用命令）*
 
 ## 命令
 
-![image-20240326205242235](../images/image-20240326205242235.png)
+![image-20240326205242235](/images/image-20240326205242235.png)
 
-![image-20240326210623729](../images/image-20240326210623729.png)
+![image-20240326210623729](/images/image-20240326210623729.png)
 
-![image-20240326211208258](../images/image-20240326211208258.png)
+![image-20240326211208258](/images/image-20240326211208258.png)
 
 ```dockerfile
 systemctl start docker  启动docker
@@ -45,7 +45,7 @@ docker stop  容器id   停止容器
 
 docker start  容器id   运行容器
 
-docker run -d -p 80:80  --name nginx01 nginx  指定容器名字
+docker run -d  --name nginx01 nginx  指定容器名字
 
 docker run --rm supermanito/helloworld  退出时删除容器（测试容器可以用）
 
@@ -62,7 +62,6 @@ docker exec  -it nginx_env   env    (exec 指定一个容器执行命令 -it基�
 docker exec  -it nginx_env echo $JAVA_ENV
 ```
 
-![image-20240326213351603](../images/image-20240326213351603.png)
+![image-20240326213351603](/images/image-20240326213351603.png)
 
-![image-20240326215305313](../images/image-20240326215305313.png)
-
+![image-20240326215305313](/images/image-20240326215305313.png)
