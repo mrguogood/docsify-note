@@ -409,7 +409,7 @@
       loadNavbar: true,
       // 封面
       coverpage: true,
-      onlyCover: true,
+      onlyCover: false,
       // 自动生成标题
       autoHeader: true,
       // 最大支持渲染的标题层级
@@ -499,6 +499,30 @@
         btn.classList.remove('show');
       }
     });
+    
+    // Docsify 钩子函数 - 确保封面页链接正确工作
+    window.$docsify.plugins = [
+      function (hook, vm) {
+        // 页面渲染完成后处理封面页链接
+        hook.doneEach(function () {
+          // 检查是否在封面页
+          if (document.querySelector('section.cover')) {
+            // 为封面页的"开始阅读"链接添加特殊处理
+            const startReadingLink = document.querySelector('section.cover a[href*="README.md"]');
+            if (startReadingLink && !startReadingLink.hasAttribute('data-processed')) {
+              startReadingLink.setAttribute('data-processed', 'true');
+              startReadingLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                // 使用 Docsify 路由跳转到 README.md
+                vm.router.go('README.md');
+                // 触发内容重新加载
+                vm._updateRender();
+              });
+            }
+          }
+        });
+      }
+    ];
   </script>
   
   <!-- Docsify v4 -->
