@@ -7,7 +7,7 @@
   const isMobileViewport = window.innerWidth <= 768;
   const BASE_PATH = isLocal ? '' : `/${REPO_NAME}`;
 
-  const DOC_EXTENSIONS = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.odt', '.rtf', '.txt'];
+  const DOC_EXTENSIONS = ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.odt', '.rtf', '.txt', '.edf'];
 
   function getFileExtension(path) {
     try {
@@ -37,6 +37,7 @@
       xls: '📊',
       xlsx: '📊',
       txt: '📄',
+      edf: '📊',
     };
     icon.textContent = iconMap[extLower] || '📄';
     icon.style.fontSize = (isMobileDevice || isMobileViewport) ? '28px' : '32px';
