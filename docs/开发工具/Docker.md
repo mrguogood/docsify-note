@@ -392,9 +392,99 @@ docker push myrepo/user-service:1.0.3
 
 ##### 方式一：手动更新（小团队常用）
 
-```
+```java
 kubectl set image deployment/user-service \
 user-service=myrepo/user-service:1.0.3
+/**
+在 Kubernetes 中更新某个 Deployment 的容器镜像版本，从而触发一次滚动发布
+
+kubectl : Kubernetes 命令行工具，用来操作集群资源。
+set image : 修改某个资源中的容器镜像  它不会删除 Deployment，而是修改配置。
+deployment/user-service ： 表示要操作的资源： 资源类型：Deployment 资源名称：user-service
+等价写法： kubectl set image deployment user-service ...
+user-service=myrepo/user-service:1.0.3 ：
+容器名 = 新镜像
+Deployment 中有一个容器名字叫 user-service，把它的镜像改成：myrepo/user-service:1.0.3
+到底做了什么：
+假设你原来 Deployment 是：
+spec:
+  template:
+    spec:
+      containers:
+        - name: user-service
+          image: myrepo/user-service:1.0.2
+执行命令后变成：
+image: myrepo/user-service:1.0.3
+
+为什么执行后会“自动发布”？
+
+因为：
+
+Kubernetes 发现 Deployment 的 Pod 模板发生变化（镜像变了）。
+
+于是它会：
+
+创建新的 ReplicaSet
+
+启动新的 Pod（使用 1.0.3）
+
+等待健康检查通过
+
+再逐步删除旧 Pod（1.0.2）
+
+这叫：
+
+Rolling Update（滚动更新）
+
+由 Kubernetes 自动完成。
+
+五、执行后如何查看状态？
+查看滚动状态
+kubectl rollout status deployment/user-service
+
+查看历史版本
+kubectl rollout history deployment/user-service
+
+回滚
+kubectl rollout undo deployment/user-service
+
+六、常见错误点
+❌ 容器名写错
+
+Deployment 里容器名必须匹配：
+
+containers:
+  - name: user-service   ← 必须一致
+
+
+否则报错：
+
+error: unable to find container named "xxx"
+
+❌ 镜像 tag 不存在
+
+如果仓库没有 1.0.3：
+
+Pod 会进入：
+
+ImagePullBackOff
+
+七、总结一句话
+
+这条命令的含义是：
+
+把 Deployment 中名为 user-service 的容器镜像升级为 1.0.3，并触发一次滚动发布。
+
+八、如果你是 Java 微服务开发
+
+它在企业中通常出现在：
+
+CI/CD 自动发布阶段
+
+Jenkins Pipeline 最后一步
+
+或 GitLab CI deploy 阶段
+/
 ```
 
 ------
