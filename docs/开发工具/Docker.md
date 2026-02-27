@@ -65,3 +65,473 @@ docker exec  -it nginx_env echo $JAVA_ENV
 ![image-20240326213351603](../images/image-20240326213351603.png)
 
 ![image-20240326215305313](../images/image-20240326215305313.png)
+
+## 镜像加速器
+
+阿里云："registry-mirrors": ["https://p7y78ivm.mirror.aliyuncs.com"]
+
+中科大："registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+
+网易："registry-mirrors": ["https://hub-mirror.c.163.com"]
+
+
+
+## 多容器运行
+
+### 场景假设
+
+![image-20260227161913460](./../images/image-20260227161913460.png)
+
+### 整体架构关系
+
+![image-20260227161943464](./../images/image-20260227161943464.png)
+
+### 步骤总览
+
+1. 每个微服务打包成 jar
+
+   - 在每个服务目录执行：
+
+     ```java
+     mvn clean package -DskipTests     
+     ```
+
+     | 部分          | 含义                                                         |
+     | ------------- | ------------------------------------------------------------ |
+     | `mvn`         | Maven 命令行工具                                             |
+     | `clean`       | 清理生命周期阶段，删除 `target/` 目录（之前编译的类文件、jar包等） |
+     | `package`     | 打包生命周期阶段，编译代码并打包成 jar/war 等格式            |
+     | `-DskipTests` | 系统属性，跳过**测试代码的执行**，但会编译测试代码           |
+
+     - 执行该命令时，Maven 按顺序执行：
+
+   ```
+   clean → validate → compile → test-compile → package
+        ↑___________________________|
+                 (跳过 test 阶段)
+   ```
+
+   - 常见变体
+
+   ```
+   # 标准用法（最常用）
+   mvn clean package -DskipTests
+   
+   # 极速打包（连测试代码都不编译）
+   mvn clean package -Dmaven.test.skip=true
+   
+   # 指定环境打包
+   mvn clean package -DskipTests -Pprod
+   
+   # 强制更新依赖后打包
+   mvn clean package -DskipTests -U
+   ```
+
+   - 使用建议
+
+     - **开发调试**：用 `-DskipTests` 快速验证打包流程
+     - **CI/CD 流水线**：通常**不建议**跳过测试，除非有单独的测试阶段
+     - **测试代码损坏**：用 `-Dmaven.test.skip=true` 临时绕过
+     - 命令就是：**"删了重来，打包成 jar，但别跑测试"** 🚀
+
+   - 执行结果
+
+     ![image-20260227162544053](./../images/image-20260227162544053.png)
+
+- 为每个服务编写 Dockerfile
+
+  - 以user-service/Dockerfile为例
+
+    ![image-20260227162732391](./../images/image-20260227162732391.png)
+
+- 修改 application.yml（关键）
+
+  - 重要：容器之间不能用 localhost！
+
+  - 必须使用服务名通信
+
+    ![image-20260227163226444](./../images/image-20260227163226444.png)
+
+- 编写 docker-compose.yml
+
+  - 在项目根目录创建：
+
+  ```yml
+  version: '3.8'
+  
+  services:
+  
+    mysql:
+      image: mysql:8.0
+      container_name: mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: 123456
+        MYSQL_DATABASE: testdb
+      ports:
+        - "3306:3306"
+      volumes:
+        - mysql-data:/var/lib/mysql
+  
+    redis:
+      image: redis:7
+      container_name: redis
+      ports:
+        - "6379:6379"
+  
+    user-service:
+      build: ./user-service
+      container_name: user-service
+      ports:
+        - "8081:8081"
+      depends_on:
+        - mysql
+        - redis
+  
+    order-service:
+      build: ./order-service
+      container_name: order-service
+      ports:
+        - "8082:8082"
+      depends_on:
+        - mysql
+        - redis
+  
+    gateway:
+      build: ./gateway
+      container_name: gateway
+      ports:
+        - "8080:8080"
+      depends_on:
+        - user-service
+        - order-service
+  
+  volumes:
+    mysql-data:
+  
+  ```
+
+  
+
+- 构建镜像并启动所有容器
+
+  - 在 docker-compose.yml 所在目录执行：
+
+  ​     ![image-20260227163720617](./../images/image-20260227163720617.png)
+
+- 验证服务
+
+![image-20260227163831750](./../images/image-20260227163831750.png)
+
+- 容器间通信原理（核心）
+
+  - docker-compose 自动创建一个 bridge 网络：
+
+    ```java
+    gateway -> user-service:8081
+    user-service -> mysql:3306
+    解析原理：
+    
+    每个 service 自动注册为 DNS
+    
+    服务名 = 主机名
+    ```
+
+### 实际开发
+
+#### 修改某一服务的代码
+
+- 开发环境：方法一（本地安装有docker，本地容器测试）：
+
+  - 重新打包  mvn clean package -DskipTests  生成新的 jar
+
+  - 重新构建该服务镜像  docker-compose build user-service
+
+  - 重启该服务容器  docker-compose up -d user-service   
+    - 注意：docker-compose restart user-service `restart` → 只是重启旧镜像 
+    - `build + up` → 使用新代码生成新镜像
+
+- 开发环境：方法二（开发环境推荐）
+
+  - 开发时不要频繁容器 build
+  - 用本地运行提高效率（有启动类，使用启动类重新启动，否则本地运行 + devtools）
+
+- 测试或者生产环境：
+  - 代码提交
+  - CI 构建（Jenkins / GitLab CI）
+  - 构建新镜像
+  - 打 tag（版本号）
+  - 推送到镜像仓库
+  - 部署新版本
+  - 滚动更新
+
+### 企业级 CI/CD + Docker 发布流程图
+
+#### 一、整体架构流程图
+
+```
+开发提交代码
+      │
+      ▼
+Git 仓库 (main / dev)
+      │
+      ▼
+CI 服务器（Jenkins / GitLab CI）
+      │
+      ├─ ① 编译打包 (mvn package)
+      ├─ ② 单元测试
+      ├─ ③ 构建 Docker 镜像
+      ├─ ④ 打版本 Tag
+      ├─ ⑤ 推送到镜像仓库
+      │
+      ▼
+镜像仓库（Harbor / DockerHub）
+      │
+      ▼
+CD 部署阶段
+      │
+      ├─ 更新 K8s Deployment 镜像版本
+      ├─ 滚动发布
+      ├─ 健康检查
+      │
+      ▼
+生产环境 Kubernetes 集群
+```
+
+------
+
+#### 二、核心组件说明
+
+##### 代码管理
+
+- GitLab
+- GitHub
+
+------
+
+##### CI 工具
+
+- Jenkins
+- GitLab CI
+
+------
+
+##### 镜像仓库
+
+- Harbor
+- Docker Hub
+
+------
+
+##### 容器编排
+
+- Kubernetes
+
+------
+
+#### 三、CI 阶段详细步骤
+
+假设你修改了 `user-service`。
+
+------
+
+##### ① 代码提交
+
+```
+git add .
+git commit -m "fix: 修改用户查询逻辑"
+git push origin dev
+```
+
+触发 CI Pipeline。
+
+------
+
+##### ② 编译 + 测试
+
+```
+mvn clean package -DskipTests=false
+```
+
+如果测试失败 → Pipeline 终止。
+
+------
+
+##### ③ 构建 Docker 镜像
+
+```
+docker build -t myrepo/user-service:1.0.3 .
+```
+
+------
+
+##### ④ 自动生成版本号（推荐规范）
+
+版本号示例：
+
+```
+1.0.3
+2026.02.27.001
+commit-short-hash
+```
+
+------
+
+##### ⑤ 推送镜像
+
+```
+docker push myrepo/user-service:1.0.3
+```
+
+镜像进入仓库。
+
+------
+
+#### 四、CD 阶段（部署到 Kubernetes）
+
+------
+
+##### 方式一：手动更新（小团队常用）
+
+```
+kubectl set image deployment/user-service \
+user-service=myrepo/user-service:1.0.3
+```
+
+------
+
+##### 方式二：自动更新（企业推荐）
+
+CI 执行：
+
+```
+kubectl apply -f k8s/deployment.yaml
+```
+
+或使用 Helm：
+
+```
+helm upgrade user-service ./chart \
+--set image.tag=1.0.3
+```
+
+------
+
+#### 五、Kubernetes 滚动发布原理
+
+Deployment 配置：
+
+```
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
+```
+
+效果：
+
+1. 先启动新 Pod
+2. 健康检查通过
+3. 再关闭旧 Pod
+4. 全程无停机
+
+------
+
+#### 六、生产级增强能力
+
+##### 1️⃣ 健康检查（必须）
+
+```
+livenessProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  initialDelaySeconds: 30
+```
+
+------
+
+##### 2️⃣ 灰度发布（Canary）
+
+流程：
+
+```
+v1: 100%
+↓
+部署 v2
+v1: 90%
+v2: 10%
+观察
+↓
+逐步切流
+```
+
+可以配合：
+
+- Istio
+
+------
+
+##### 3️⃣ 快速回滚
+
+```
+kubectl rollout undo deployment/user-service
+```
+
+秒级回滚。
+
+------
+
+#### 七、完整企业级流水线结构
+
+```
+Stage 1: Checkout
+Stage 2: Compile
+Stage 3: Test
+Stage 4: Code Scan (Sonar)
+Stage 5: Build Image
+Stage 6: Push Image
+Stage 7: Deploy to Dev
+Stage 8: Deploy to Test
+Stage 9: Deploy to Prod (人工审批)
+```
+
+可结合：
+
+- SonarQube
+
+------
+
+#### 八、实际企业架构分层
+
+```
+开发环境
+  ↓
+测试环境
+  ↓
+预生产环境
+  ↓
+生产环境
+```
+
+每个环境：
+
+- 独立 namespace
+- 独立数据库
+- 独立配置
+
+------
+
+#### 九、企业最佳实践
+
+✅ 镜像必须带版本号（禁止 latest）
+ ✅ 禁止在生产服务器手动 build
+ ✅ 所有部署必须可回滚
+ ✅ 使用镜像不可变原则
+ ✅ 配置与代码分离
+
+------
+
+#### 十、完整一句话总结
+
+> 提交代码 → CI 构建镜像 → 推送仓库 → CD 更新 Deployment → K8s 滚动发布 → 健康检查 → 完成上线

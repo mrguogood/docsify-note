@@ -28,7 +28,7 @@
   * [Git](开发工具/Git.md)
   * [Docsify 使用指南](开发工具/Docsify使用指南.md)
   * [Typora + Docsify 快速入门](开发工具/Typora+Docsify快速入门.md)
-
+  * [笔记本电脑问题](开发工具/笔记本电脑问题笔记.md)
 ---
 
 * 📖 [操作指南](guide.md)
